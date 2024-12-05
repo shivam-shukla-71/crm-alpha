@@ -1,0 +1,24 @@
+{
+  "navigation": {
+    "dashboard": "Panel",
+    "contacts": "Contactos",
+    "pipeline": "Pipeline",
+    "tasks": "Tareas",
+    "settings": "Ajustes"
+  },
+  "common": {
+    "search": "Buscar",
+    "add": "Añadir",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "totalDeals": "Acuerdos Totales",
+    "activeContacts": "Contactos Activos",
+    "pendingTasks": "Tareas Pendientes",
+    "recentActivity": "Actividad Reciente"
+  }
+}

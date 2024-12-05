@@ -1,0 +1,67 @@
+// This is your Prisma schema file
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Contact {
+  id          String     @id @default(cuid())
+  name        String
+  email       String?
+  phone       String?
+  company     String?
+  position    String?    @default("")
+  status      String?    @default("active")
+  lastContact DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now()) @updatedAt
+  deals       Deal[]
+  activities  Activity[]
+  tasks       Task[]
+}
+
+model Deal {
+  id          String     @id @default(cuid())
+  title       String
+  value       Float      @default(0)
+  stage       String     @default("lead") // lead, proposal, negotiation, closed
+  description String?    @default("")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @default(now()) @updatedAt
+  contact     Contact?   @relation(fields: [contactId], references: [id])
+  contactId   String?
+  activities  Activity[]
+  tasks       Task[]
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  dueDate     DateTime
+  status      String    @default("TODO")
+  priority    String    @default("medium")
+  contact     Contact?  @relation(fields: [contactId], references: [id])
+  contactId   String?
+  deal        Deal?     @relation(fields: [dealId], references: [id])
+  dealId      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Activity {
+  id          String    @id @default(cuid())
+  type        String    // email, call, meeting
+  description String    @default("")
+  date        DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+  contact     Contact?  @relation(fields: [contactId], references: [id])
+  contactId   String?
+  deal        Deal?     @relation(fields: [dealId], references: [id])
+  dealId      String?
+}

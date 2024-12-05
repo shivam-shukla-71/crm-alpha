@@ -1,113 +1,190 @@
-import Image from 'next/image'
+'use client';
 
-export default function Home() {
+import { useEffect } from 'react';
+import { useCRMStore } from '@/lib/store/store';
+import Link from 'next/link';
+import { 
+  UserGroupIcon, 
+  CurrencyDollarIcon, 
+  CheckCircleIcon,
+  ClockIcon,
+  CalendarIcon,
+  ArrowTrendingUpIcon
+} from '@heroicons/react/24/outline';
+
+export default function DashboardPage() {
+  const { contacts, deals, tasks, activities, fetchContacts, fetchDeals, fetchTasks, fetchActivities } = useCRMStore();
+
+  useEffect(() => {
+    fetchContacts();
+    fetchDeals();
+    fetchTasks();
+    fetchActivities();
+  }, [fetchContacts, fetchDeals, fetchTasks, fetchActivities]);
+
+  // Calculate stats
+  const totalContacts = contacts.length;
+  const activeDeals = deals.filter(deal => deal.stage !== 'closed').length;
+  const totalValue = deals.reduce((sum, deal) => sum + deal.value, 0);
+  const pendingTasks = tasks.filter(task => task.status === 'TODO').length;
+  const recentActivities = activities.slice(0, 5);
+  const upcomingTasks = tasks
+    .filter(task => task.status !== 'DONE')
+    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
+    .slice(0, 5);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="p-8 space-y-8">
+      <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Contacts Card */}
+        <Link href="/contacts" className="group">
+          <div className="relative bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <UserGroupIcon className="h-8 w-8 text-blue-500" />
+              </div>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Total Contacts</dt>
+                  <dd className="flex items-baseline">
+                    <div className="text-2xl font-semibold text-gray-900">{totalContacts}</div>
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </Link>
+
+        {/* Deals Card */}
+        <Link href="/pipeline" className="group">
+          <div className="relative bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <CurrencyDollarIcon className="h-8 w-8 text-green-500" />
+              </div>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Active Deals</dt>
+                  <dd className="flex items-baseline">
+                    <div className="text-2xl font-semibold text-gray-900">{activeDeals}</div>
+                    <div className="ml-2 text-sm text-gray-600">
+                      ${totalValue.toLocaleString()}
+                    </div>
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </Link>
+
+        {/* Tasks Card */}
+        <Link href="/tasks" className="group">
+          <div className="relative bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <CheckCircleIcon className="h-8 w-8 text-indigo-500" />
+              </div>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Pending Tasks</dt>
+                  <dd className="flex items-baseline">
+                    <div className="text-2xl font-semibold text-gray-900">{pendingTasks}</div>
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </Link>
+
+        {/* Activities Card */}
+        <Link href="/activities" className="group">
+          <div className="relative bg-white p-6 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <ClockIcon className="h-8 w-8 text-yellow-500" />
+              </div>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">Recent Activities</dt>
+                  <dd className="flex items-baseline">
+                    <div className="text-2xl font-semibold text-gray-900">{activities.length}</div>
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </Link>
+      </div>
+
+      {/* Recent Activities and Upcoming Tasks */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Recent Activities */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="p-6">
+            <h2 className="flex items-center text-lg font-medium text-gray-900">
+              <CalendarIcon className="h-5 w-5 mr-2 text-gray-500" />
+              Recent Activities
+            </h2>
+            <div className="mt-4 flow-root">
+              <ul className="divide-y divide-gray-200">
+                {recentActivities.map((activity) => (
+                  <li key={activity.id} className="py-3">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {activity.type}
+                        </p>
+                        <p className="text-sm text-gray-500 truncate">{activity.description}</p>
+                      </div>
+                      <div className="flex-shrink-0 text-sm text-gray-500">
+                        {new Date(activity.date).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              {recentActivities.length === 0 && (
+                <p className="text-sm text-gray-500 text-center py-4">No recent activities</p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Upcoming Tasks */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+          <div className="p-6">
+            <h2 className="flex items-center text-lg font-medium text-gray-900">
+              <ArrowTrendingUpIcon className="h-5 w-5 mr-2 text-gray-500" />
+              Upcoming Tasks
+            </h2>
+            <div className="mt-4 flow-root">
+              <ul className="divide-y divide-gray-200">
+                {upcomingTasks.map((task) => (
+                  <li key={task.id} className="py-3">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {task.title}
+                        </p>
+                        <p className="text-sm text-gray-500 truncate">{task.description}</p>
+                      </div>
+                      <div className="flex-shrink-0 text-sm text-gray-500">
+                        Due: {new Date(task.dueDate).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              {upcomingTasks.length === 0 && (
+                <p className="text-sm text-gray-500 text-center py-4">No upcoming tasks</p>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }
