@@ -24,7 +24,7 @@ interface CustomerEngagementProps {
   contacts: Array<{
     id: string;
     name: string;
-    email: string;
+    email: string | null;
     phone: string | null;
     company: string | null;
     position: string | null;

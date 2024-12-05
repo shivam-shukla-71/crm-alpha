@@ -17,32 +17,34 @@ export default function AddTaskModal({ isOpen, onClose, contactId }: AddTaskModa
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    dueDate: new Date().toISOString().split('T')[0],
-    contactId: contactId || '',
+    dueDate: new Date(),
     status: 'TODO',
-    priority: 'MEDIUM',
+    priority: 'medium',
+    contactId: null as string | null,
+    dealId: null as string | null,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
 
     try {
       await addTask({
         ...formData,
         description: formData.description || null,
         contactId: formData.contactId || null,
-        dueDate: new Date(formData.dueDate),
+        dealId: formData.dealId || null,
+        dueDate: formData.dueDate,
       });
       onClose();
       // Reset form
       setFormData({
         title: '',
         description: '',
-        dueDate: new Date().toISOString().split('T')[0],
-        contactId: contactId || '',
+        dueDate: new Date(),
         status: 'TODO',
-        priority: 'MEDIUM',
+        priority: 'medium',
+        contactId: null,
+        dealId: null,
       });
     } catch (error) {
       console.error('Error creating task:', error);
@@ -139,8 +141,8 @@ export default function AddTaskModal({ isOpen, onClose, contactId }: AddTaskModa
                           id="dueDate"
                           required
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          value={formData.dueDate}
-                          onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                          value={formData.dueDate.toISOString().split('T')[0]}
+                          onChange={(e) => setFormData({ ...formData, dueDate: new Date(e.target.value) })}
                         />
                       </div>
                       <div>
@@ -151,8 +153,8 @@ export default function AddTaskModal({ isOpen, onClose, contactId }: AddTaskModa
                           id="contact"
                           name="contact"
                           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          value={formData.contactId}
-                          onChange={(e) => setFormData({ ...formData, contactId: e.target.value })}
+                          value={formData.contactId || ''}
+                          onChange={(e) => setFormData({ ...formData, contactId: e.target.value || null })}
                         >
                           <option value="">No Contact</option>
                           {contacts.map((contact) => (
@@ -160,6 +162,21 @@ export default function AddTaskModal({ isOpen, onClose, contactId }: AddTaskModa
                               {contact.name}
                             </option>
                           ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label htmlFor="deal" className="block text-sm font-medium text-gray-700">
+                          Deal
+                        </label>
+                        <select
+                          id="deal"
+                          name="deal"
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                          value={formData.dealId || ''}
+                          onChange={(e) => setFormData({ ...formData, dealId: e.target.value || null })}
+                        >
+                          <option value="">No Deal</option>
+                          {/* Add deals options here */}
                         </select>
                       </div>
                       <div>

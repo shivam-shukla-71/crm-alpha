@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     }
 
     // Check if email already exists
-    const existingContact = await prisma.contact.findUnique({
+    const existingContact = await prisma.contact.findFirst({
       where: { email: data.email },
     });
 

@@ -20,11 +20,13 @@ export default function DealModal({ isOpen, onClose, deal }: DealModalProps) {
     value: number;
     stage: DealStage;
     contactId: string | null;
+    description: string;
   }>({
     title: '',
     value: 0,
     stage: 'lead',
     contactId: null,
+    description: '',
   });
 
   useEffect(() => {
@@ -34,6 +36,7 @@ export default function DealModal({ isOpen, onClose, deal }: DealModalProps) {
         value: deal.value,
         stage: deal.stage as DealStage,
         contactId: deal.contactId,
+        description: deal.description || '',
       });
     } else {
       setFormData({
@@ -41,6 +44,7 @@ export default function DealModal({ isOpen, onClose, deal }: DealModalProps) {
         value: 0,
         stage: 'lead',
         contactId: null,
+        description: '',
       });
     }
   }, [deal]);
@@ -209,6 +213,27 @@ export default function DealModal({ isOpen, onClose, deal }: DealModalProps) {
                             </option>
                           ))}
                         </select>
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="description"
+                          className="block text-sm font-medium text-gray-700"
+                        >
+                          Description
+                        </label>
+                        <textarea
+                          id="description"
+                          name="description"
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                          value={formData.description}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              description: e.target.value,
+                            })
+                          }
+                        />
                       </div>
 
                       <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">

@@ -46,9 +46,10 @@ class AutomationEngine {
           title: this.interpolateTemplate(action.params.title, context),
           description: this.interpolateTemplate(action.params.description, context),
           dueDate: this.calculateDueDate(action.params.dueDays),
-          status: 'pending',
+          status: 'TODO',
           contactId: context.contactId,
           priority: 'medium',
+          dealId: null,
         });
         break;
 

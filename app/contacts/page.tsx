@@ -26,9 +26,9 @@ export default function ContactsPage() {
 
   const filteredContacts = contacts
     .filter((contact) => {
-      const matchesSearch = 
+      const matchesSearch =
         contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        contact.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (contact.email?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
         (contact.company?.toLowerCase() || '').includes(searchQuery.toLowerCase());
       
       const matchesStatus = statusFilter === 'all' || contact.status === statusFilter;
@@ -156,7 +156,9 @@ export default function ContactsPage() {
                         : 'bg-gray-100 text-gray-800'
                     }`}
                   >
-                    {contact.status?.charAt(0).toUpperCase() + contact.status?.slice(1) || 'N/A'}
+                    {contact.status 
+                      ? contact.status.charAt(0).toUpperCase() + contact.status.slice(1)
+                      : 'N/A'}
                   </button>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

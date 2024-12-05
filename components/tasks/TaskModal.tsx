@@ -16,16 +16,17 @@ interface TaskModalProps {
 export default function TaskModal({ isOpen, onClose, mode, taskId, contactId }: TaskModalProps) {
   const { addTask, updateTask, tasks, contacts } = useCRMStore();
   const [error, setError] = useState<string | null>(null);
-  
+
   const task = taskId ? tasks.find(t => t.id === taskId) : null;
-  
+
   const [formData, setFormData] = useState({
     title: task?.title || '',
     description: task?.description || '',
     dueDate: task ? new Date(task.dueDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
     contactId: task?.contactId || contactId || '',
+    dealId: task?.dealId || '',
     status: task?.status || 'TODO',
-    priority: task?.priority || 'medium',
+    priority: task?.priority || 'MEDIUM',
   });
 
   // Update form data when task changes
@@ -36,6 +37,7 @@ export default function TaskModal({ isOpen, onClose, mode, taskId, contactId }: 
         description: task.description || '',
         dueDate: new Date(task.dueDate).toISOString().split('T')[0],
         contactId: task.contactId || '',
+        dealId: task.dealId || '',
         status: task.status,
         priority: task.priority,
       });
@@ -45,8 +47,9 @@ export default function TaskModal({ isOpen, onClose, mode, taskId, contactId }: 
         description: '',
         dueDate: new Date().toISOString().split('T')[0],
         contactId: contactId || '',
+        dealId: '',
         status: 'TODO',
-        priority: 'medium',
+        priority: 'MEDIUM',
       });
     }
   }, [task, contactId]);
@@ -60,6 +63,7 @@ export default function TaskModal({ isOpen, onClose, mode, taskId, contactId }: 
         ...formData,
         description: formData.description || null,
         contactId: formData.contactId || null,
+        dealId: formData.dealId || null,
         dueDate: new Date(formData.dueDate),
       };
 
@@ -195,9 +199,9 @@ export default function TaskModal({ isOpen, onClose, mode, taskId, contactId }: 
                           value={formData.priority}
                           onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
                         >
-                          <option value="low">Low</option>
-                          <option value="medium">Medium</option>
-                          <option value="high">High</option>
+                          <option value="LOW">Low</option>
+                          <option value="MEDIUM">Medium</option>
+                          <option value="HIGH">High</option>
                         </select>
                       </div>
                       <div>
@@ -217,6 +221,21 @@ export default function TaskModal({ isOpen, onClose, mode, taskId, contactId }: 
                               {contact.name}
                             </option>
                           ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label htmlFor="deal" className="block text-sm font-medium text-gray-700">
+                          Deal
+                        </label>
+                        <select
+                          id="deal"
+                          name="deal"
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                          value={formData.dealId}
+                          onChange={(e) => setFormData({ ...formData, dealId: e.target.value })}
+                        >
+                          <option value="">No Deal</option>
+                          {/* Add deals here */}
                         </select>
                       </div>
                       <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">

@@ -7,7 +7,7 @@ import TaskModal from '@/components/tasks/TaskModal';
 import type { Task } from '@prisma/client';
 
 type TaskStatus = 'TODO' | 'IN_PROGRESS' | 'DONE';
-type TaskPriority = 'low' | 'medium' | 'high';
+type TaskPriority = 'LOW' | 'MEDIUM' | 'HIGH';
 
 export default function TasksPage() {
   const { tasks, updateTask, contacts, deals, fetchTasks, fetchContacts, fetchDeals } = useCRMStore();
@@ -71,11 +71,11 @@ export default function TasksPage() {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'low':
+      case 'LOW':
         return 'text-gray-600';
-      case 'medium':
+      case 'MEDIUM':
         return 'text-orange-600';
-      case 'high':
+      case 'HIGH':
         return 'text-red-600';
       default:
         return 'text-gray-600';

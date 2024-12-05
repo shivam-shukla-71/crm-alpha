@@ -26,7 +26,7 @@ export default function EditContactModal({ isOpen, onClose, contact }: EditConta
     if (contact) {
       setFormData({
         name: contact.name,
-        email: contact.email,
+        email: contact.email || '',
         phone: contact.phone || '',
         company: contact.company || '',
         position: contact.position || '',
